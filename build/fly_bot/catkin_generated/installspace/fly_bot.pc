@@ -1,0 +1,8 @@
+prefix=/home/a3g34n/ROS_PROJECTS/2209b_ws/install
+
+Name: fly_bot
+Description: Description of fly_bot
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,2 @@
+fly_bot
+-DCATKIN_DEVEL_PREFIX=/home/a3g34n/ROS_PROJECTS/2209b_ws/devel -DCMAKE_INSTALL_PREFIX=/home/a3g34n/ROS_PROJECTS/2209b_ws/install -G Unix Makefiles
