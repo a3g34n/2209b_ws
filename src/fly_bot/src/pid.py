@@ -2,17 +2,17 @@
 import time
 
 #--------------------------------------------------------------------------------------------------------------------------------------
-def PID(roll, pitch, yaw, f, z, x, y):
+def PID(roll, pitch, yaw, f, z, x, y, x_set, y_set):
 	#Define the global variables to prevent them from dying and resetting to zero, each time a function call occurs. Some of these variables 		may be redundant.
 	global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw,kp_z, ki_z, kd_z, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y ,prevErr_roll, prevErr_pitch, prevErr_yaw, prevErr_z, prevErr_x, prevErr_y, pMem_roll, pMem_yaw, pMem_pitch, pMem_z, pMem_x, pMem_y, iMem_roll, iMem_pitch, iMem_yaw, iMem_z, iMem_x, iMem_y, dMem_roll, dMem_pitch, dMem_yaw, dMem_z, dMem_x, dMem_y, flag, setpoint, setpoint_z, setpoint_x, setpoint_y, sampleTime
 	#-----------------------
 	#Assign your PID values here. From symmetry, control for roll and pitch is the same.
-	kp_roll = 70
+	kp_roll = 80
 	ki_roll = 0.0002
 	kd_roll = 89
-	kp_pitch = kp_roll
-	ki_pitch = ki_roll
-	kd_pitch = kd_roll
+	kp_pitch = 70
+	ki_pitch = 0.0002
+	kd_pitch = 89
 	kp_yaw = 0.1
 	ki_yaw = 0
 	kd_yaw = 0
@@ -31,8 +31,8 @@ def PID(roll, pitch, yaw, f, z, x, y):
 	#Define other variables here, and calculate the errors.
 	sampleTime = 0
 	setpoint = 0
-	setpoint_x = 0
-	setpoint_y = 2
+	setpoint_x = x_set
+	setpoint_y = y_set
 	setpoint_z = 5 #EA
 
 	err_pitch = float(pitch)*(180 / 3.141592653) - setpoint 
@@ -171,7 +171,6 @@ def PID(roll, pitch, yaw, f, z, x, y):
 	esc_fl = 1500 - output_roll - output_pitch - output_yaw - output_z + output_y - output_x
 	#fr in my code is fl in gazebo's world
 	esc_fr = 1500 - output_roll + output_pitch + output_yaw - output_z + output_y + output_x
-	print(output_x)
 	#Limit the ESC pulses to upper limit and lower limit, in case the PID algorithm goes crazy and high af.
 	if(esc_br > 2000): esc_br = 2000
 	if(esc_bl > 2000): esc_bl = 2000
