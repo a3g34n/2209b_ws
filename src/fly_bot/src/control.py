@@ -32,21 +32,28 @@ def control_kwad(msg, args):
 
 	(roll, pitch, yaw) = (euler_from_quaternion(orientationList))
 	
-	# Circular Motion Calculations
-	# r = 2
+	#Circular Motion Calculations
+	# r = 5
 	# if (z < 1):
 	# 	theta = 0
 	# 	x_init = x
 	# 	y_init = y
 	# x_set = x_init + (math.cos(theta) * r)
 	# y_set = y_init + (math.sin(theta) * r)
-	x_set = 0
-	y_set = 0
-	# theta += 0.0001
+	if(z<5):
+		x_set = 0
+		y_set = 0
+	
+	else:
+		x_set = 0
+		y_set = 0
+
+	z_set = 5
+	# theta += 0.000001
 	# print(x_set)
 	#send roll, pitch, yaw data to PID() for attitude-stabilisation, along with 'f', to obtain 'fUpdated'
 	#Alternatively, you can add your 'control-file' with other algorithms such as Reinforcement learning, and import the main function here instead of PID().
-	(fUpdated, err_roll, err_pitch, err_yaw, err_z, err_x, err_y) = PID(roll, pitch, yaw, f, z, x, y, x_set, y_set)
+	(fUpdated, err_roll, err_pitch, err_yaw, err_z, err_x, err_y) = PID(roll, pitch, yaw, f, z, x, y, x_set, y_set, z_set)
 	
 	#The object args contains the tuple of objects (velPub, err_rollPub, err_pitchPub, err_yawPub. publish the information to namespace.
 	args[0].publish(fUpdated)
@@ -59,6 +66,9 @@ def control_kwad(msg, args):
 	errorRoll.append(err_roll)
 	errorPitch.append(err_pitch)
 	errorYaw.append(err_yaw)
+	errorX.append(err_x)
+	errorY.append(err_y)
+	errorZ.append(err_z)
 	#print("Roll: ",roll*(180/3.141592653),"Pitch: ", pitch*(180/3.141592653),"Yaw: ", yaw*(180/3.141592653))
 	#print(orientationObj)
 #----------------------------------------------------
@@ -66,6 +76,9 @@ def control_kwad(msg, args):
 errorRoll = []
 errorPitch = []
 errorYaw = []
+errorX = []
+errorY = []
+errorZ = []
 
 rospy.init_node("Control")
 rate = rospy.Rate(50) # ROS Rate at 5Hz
@@ -108,6 +121,50 @@ plt.ylabel('Error')
   
 # giving a title to my graph
 plt.title('Pitch error')
+
+plt.figure()
+
+plt.plot(errorYaw)
+# naming the x axis
+plt.xlabel('Time')
+# naming the y axis
+plt.ylabel('Error')
+  
+# giving a title to my graph
+plt.title('Yaw error')
+
+plt.figure()
+
+plt.plot(errorX)
+# naming the x axis
+plt.xlabel('Time')
+# naming the y axis
+plt.ylabel('Error')
+  
+# giving a title to my graph
+plt.title('X error')
+
+plt.figure()
+
+plt.plot(errorY)
+# naming the x axis
+plt.xlabel('Time')
+# naming the y axis
+plt.ylabel('Error')
+  
+# giving a title to my graph
+plt.title('Y error')
+
+plt.figure()
+
+plt.plot(errorZ)
+# naming the x axis
+plt.xlabel('Time')
+# naming the y axis
+plt.ylabel('Error')
+  
+# giving a title to my graph
+plt.title('Z error')
 
 # function to show the plot
 plt.show()

@@ -222,5 +222,10 @@
 		<broadcastTF>false</broadcastTF>
 	  </plugin>
 	</gazebo> -->
+
+
+	<gazebo>
+		<plugin name="mass" filename="libmass.so"/> 
+	</gazebo>  
 	
 </robot>
