@@ -4,48 +4,51 @@ import time
 #--------------------------------------------------------------------------------------------------------------------------------------
 def PID(roll, pitch, yaw, f, z, x, y, x_set, y_set, z_set):
 	#Define the global variables to prevent them from dying and resetting to zero, each time a function call occurs. Some of these variables 		may be redundant.
-	global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw,kp_z, ki_z, kd_z, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y ,prevErr_roll, prevErr_pitch, prevErr_yaw, prevErr_z, prevErr_x, prevErr_y, pMem_roll, pMem_yaw, pMem_pitch, pMem_z, pMem_x, pMem_y, iMem_roll, iMem_pitch, iMem_yaw, iMem_z, iMem_x, iMem_y, dMem_roll, dMem_pitch, dMem_yaw, dMem_z, dMem_x, dMem_y, flag, setpoint, setpoint_z, setpoint_x, setpoint_y, sampleTime
+	global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw,kp_z, ki_z, kd_z, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y ,prevErr_roll, prevErr_pitch, prevErr_yaw, prevErr_z, prevErr_x, prevErr_y, pMem_roll, pMem_yaw, pMem_pitch, pMem_z, pMem_x, pMem_y, iMem_roll, iMem_pitch, iMem_yaw, iMem_z, iMem_x, iMem_y, dMem_roll, dMem_pitch, dMem_yaw, dMem_z, dMem_x, dMem_y, flag, setpoint, setpoint_z, setpoint_x, setpoint_y, sampleTime, sampleTime2
 	#-----------------------
 	#Assign your PID values here. From symmetry, control for roll and pitch is the same.
-	kp_roll = 160
-	ki_roll = 0.0002
-	kd_roll = 40
-	kp_pitch = 70
-	ki_pitch = 0.0002
-	kd_pitch = 89
+	
+	kp_roll = 10
+	ki_roll = 0
+	kd_roll = 0
+	kp_pitch = 10
+	ki_pitch = 0
+	kd_pitch = 0
 	kp_yaw = 0.1
 	ki_yaw = 0
 	kd_yaw = 0
 
-	kp_x = 60
-	ki_x = 0.0002
-	kd_x = 50
-	kp_y = 60
-	ki_y = 0.0002
-	kd_y = 50
-	kp_z = 50
-	ki_z = 0.0002
-	kd_z = 90
+
+	kp_x = 10
+	ki_x = 0
+	kd_x = 0
+	kp_y = 10
+	ki_y = 0
+	kd_y = 0
+	kp_z = 20
+	ki_z = 0
+	kd_z = 0
 
 	flag = 0
 	#Define other variables here, and calculate the errors.
 	sampleTime = 0
+	sampleTime2 = 0
 	setpoint = 0
 	setpoint_x = x_set
 	setpoint_y = y_set
 	setpoint_z = z_set #EA
 
-	err_pitch = float(pitch)*(180 / 3.141592653) - setpoint 
-	err_roll = float(roll)*(180 / 3.141592653) - setpoint
-	err_yaw = float(yaw)*(180/3.14159263) - setpoint
+
 	err_x = x - setpoint_x
 	err_y = y - setpoint_y
 	err_z = z - setpoint_z
+	
 	currTime = time.time()
 	#-----------------------
 	#Reset the following variables during the first run only.
 	if flag == 0:
 		prevTime = 0
+		prevTime2 = 0
 		prevErr_roll = 0
 		prevErr_pitch = 0
 		prevErr_yaw = 0
@@ -74,38 +77,24 @@ def PID(roll, pitch, yaw, f, z, x, y, x_set, y_set, z_set):
 	#------------------------
 	#Define dt, dy(t) here for kd calculations.
 	dTime = currTime - prevTime
-	dErr_pitch = err_pitch - prevErr_pitch
-	dErr_roll = err_roll - prevErr_roll
-	dErr_yaw = err_yaw - prevErr_yaw
 	dErr_z = err_z - prevErr_z
 	dErr_x = err_x - prevErr_x
 	dErr_y = err_y - prevErr_y
 
-	#-------------------------------------------------------------------------------------------------------------------------------
+
 	#This is the Heart of the PID algorithm. PID behaves more accurately, if it is sampled at regular intervals. You can change the sampleTime to whatever value is suitable for your plant.
 	if(dTime >= sampleTime):
 		#Kp*e(t)
-		pMem_roll = kp_roll * err_roll
-		pMem_pitch = kp_pitch * err_pitch
-		pMem_yaw = kp_yaw * err_yaw
-		pMem_z = kp_z * err_z
 		pMem_x = kp_x * err_x
 		pMem_y = kp_y * err_y
+		pMem_z = kp_z * err_z
+
 		
 		#integral(e(t))
-		iMem_roll += err_pitch * dTime
-		iMem_pitch += err_roll * dTime
-		iMem_yaw += err_yaw * dTime
 		iMem_z += err_z * dTime
 		iMem_x += err_x * dTime
 		iMem_y += err_y * dTime
 		
-		if(iMem_roll > 400): iMem_roll = 400
-		if(iMem_roll < -400): iMem_roll = -400
-		if(iMem_pitch > 400): iMem_pitch = 400
-		if(iMem_pitch < -400): iMem_pitch = -400
-		if(iMem_yaw > 400): iMem_yaw = 400
-		if(iMem_yaw < -400): iMem_yaw = -400
 		if(iMem_z > 400): iMem_z = 400
 		if(iMem_z < -400): iMem_z = -400
 		if(iMem_x > 400): iMem_x = 400
@@ -114,47 +103,85 @@ def PID(roll, pitch, yaw, f, z, x, y, x_set, y_set, z_set):
 		if(iMem_y < -400): iMem_y = -400
 
 		#derivative(e(t))
-		dMem_roll = dErr_roll / dTime
-		dMem_pitch = dErr_pitch / dTime
-		dMem_yaw = dErr_yaw / dTime
 		dMem_z = dErr_z / dTime
 		dMem_x = dErr_x / dTime
 		dMem_y = dErr_y / dTime
 	
 	#Store the current variables into previous variables for the next iteration.
 	prevTime = currTime
-	prevErr_roll = err_roll
-	prevErr_pitch = err_pitch
-	prevErr_yaw = err_yaw
 	prevErr_z = err_z
 	prevErr_x = err_x
 	prevErr_y = err_y
 	
 	#output = Kp*e(t) + Ki*integral(e(t)) + Kd*derivative(e(t))
-	output_roll = pMem_roll + ki_roll * iMem_roll + kd_roll * dMem_roll
-	output_pitch = pMem_pitch + ki_pitch * iMem_pitch + kd_pitch * dMem_pitch
-	output_yaw = pMem_yaw + ki_yaw * iMem_yaw + kd_yaw * dMem_yaw
 	output_z = pMem_z + ki_z * iMem_z + kd_z * dMem_z
 	output_x = pMem_x + ki_x * iMem_x + kd_x * dMem_x
 	output_y = pMem_y + ki_y * iMem_y + kd_y * dMem_y
 
+
+	#--------------------------------------------------------
+	print("----------------------------------------------------")
+	# print("X error is : ", output_x)
+	# print("Y error is : ", output_y)
+	print(z)
+	print(err_z)
+	print("----------------------------------------------------")
+	#--------------------------------------------------------
+
+	# err_pitch = float(pitch)*(180 / 3.141592653) - (-output_x) 
+	# err_roll = float(roll)*(180 / 3.141592653) - output_y
+	# err_yaw = float(yaw)*(180/3.14159263) - setpoint
+	err_pitch = float(pitch)*(180 / 3.141592653) - 0 
+	err_roll = float(roll)*(180 / 3.141592653) - 0
+	err_yaw = float(yaw)*(180/3.14159263) - 0
+	#-------------------------------------------------------------------
 	#-------------------------------------------------------------------------------------------------------------------------------
-		#Ignore this.
-	#br_motor_vel = 50.5 + output_pitch + output_roll + output_yaw
-	#bl_motor_vel = 50.5 - output_pitch + output_roll - output_yaw
-	#fl_motor_vel = 50.5 - output_pitch - output_roll + output_yaw
-	#fr_motor_vel = 50.5 + output_pitch - output_roll - output_yaw
+	#This is the Heart of the PID algorithm. PID behaves more accurately, if it is sampled at regular intervals. You can change the sampleTime to whatever value is suitable for your plant.
+	currTime2 = time.time()
+	dTime2 = currTime2 - prevTime2
 	
+	dErr_pitch = err_pitch - prevErr_pitch
+	dErr_roll = err_roll - prevErr_roll
+	dErr_yaw = err_yaw - prevErr_yaw
+
+	if(dTime2 >= sampleTime2):
+		#Kp*e(t)
+		pMem_roll = kp_roll * err_roll
+		pMem_pitch = kp_pitch * err_pitch
+		pMem_yaw = kp_yaw * err_yaw
+
+		
+		#integral(e(t))
+		iMem_roll += err_pitch * dTime2
+		iMem_pitch += err_roll * dTime2
+		iMem_yaw += err_yaw * dTime2
+		
+		if(iMem_roll > 400): iMem_roll = 400
+		if(iMem_roll < -400): iMem_roll = -400
+		if(iMem_pitch > 400): iMem_pitch = 400
+		if(iMem_pitch < -400): iMem_pitch = -400
+		if(iMem_yaw > 400): iMem_yaw = 400
+		if(iMem_yaw < -400): iMem_yaw = -400
+
+		#derivative(e(t))
+		dMem_roll = dErr_roll / dTime2
+		dMem_pitch = dErr_pitch / dTime2
+		dMem_yaw = dErr_yaw / dTime2
+
+	
+	#Store the current variables into previous variables for the next iteration.
+	prevTime2 = currTime2
+	prevErr_roll = err_roll
+	prevErr_pitch = err_pitch
+	prevErr_yaw = err_yaw
+
+	
+	#output = Kp*e(t) + Ki*integral(e(t)) + Kd*derivative(e(t))
+	output_roll = pMem_roll + ki_roll * iMem_roll + kd_roll * dMem_roll
+	output_pitch = pMem_pitch + ki_pitch * iMem_pitch + kd_pitch * dMem_pitch
+	output_yaw = pMem_yaw + ki_yaw * iMem_yaw + kd_yaw * dMem_yaw
+
 	#-------------------------------------------------------------------------------------------------------------------------------
-	#Some Gazebo information for your reference.
-	
-	#Positive roll is right wing down
-	#Positive pitch is front nose down
-	#Positive yaw is rotate CCW about z-axis
-	
-	#Red is x-axis
-	#Green is y-axis
-	#Blue is z-axis
 	
 	#-------------------------------------------------------------------------------------------------------------------------------
 	#br: Back Right

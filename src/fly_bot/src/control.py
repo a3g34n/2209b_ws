@@ -71,6 +71,7 @@ def control_kwad(msg, args):
 	errorZ.append(err_z)
 	#print("Roll: ",roll*(180/3.141592653),"Pitch: ", pitch*(180/3.141592653),"Yaw: ", yaw*(180/3.141592653))
 	#print(orientationObj)
+	rate.sleep()
 #----------------------------------------------------
 #Initiate the node that will control the gazebo model
 errorRoll = []
